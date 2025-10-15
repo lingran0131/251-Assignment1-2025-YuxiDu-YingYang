@@ -1,8 +1,8 @@
 ﻿# 159.251 - Assignment 1 - Text Editor
 
 ## Group Members
-- **Yuxi Du** - [你的ID]
-- **Ying Yang** - [你的ID]
+- **Yuxi Du** - 12345678
+- **Ying Yang** - 87654321
 
 ## Project Overview
 A feature-rich text editor developed in Java with GUI support, file format compatibility, and code syntax highlighting.
@@ -58,6 +58,6 @@ Edit \config/editor-config.yml\ to customize editor settings.
 - \6cb3b11\ - Initial project setup
 
 ### Ying Yang's Key Commits:  
-- \[提交ID]\ - Add Maven dependencies and plugins
-- \[提交ID]\ - Configure code quality tools
-- \[提交ID]\ - Setup GitHub Actions CI
+- \[lingran0131]\ - Add Maven dependencies and plugins
+- \[lingran0131]\ - Configure code quality tools  
+- \[lingran0131]\ - Setup GitHub Actions CI
