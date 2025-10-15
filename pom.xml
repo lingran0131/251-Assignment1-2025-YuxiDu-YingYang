@@ -17,9 +17,7 @@
     </properties>
 
     <dependencies>
-        <!-- JavaFX for GUI (Choose one) -->
-        <!-- Option 1: Swing (built-in, no extra dependency) -->
-        <!-- Option 2: JavaFX -->
+        <!-- JavaFX for GUI -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -67,17 +65,62 @@
                     <rulesets>
                         <ruleset>/category/java/bestpractices.xml</ruleset>
                         <ruleset>/category/java/codestyle.xml</ruleset>
+                        <ruleset>/category/java/design.xml</ruleset>
                     </rulesets>
                     <printFailingErrors>true</printFailingErrors>
                     <failurePriority>5</failurePriority>
                     <targetDirectory>${project.basedir}/reports/pmd</targetDirectory>
+                    <format>xml</format>
+                    <linkXRef>true</linkXRef>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>pmd-check</id>
+                        <id>pmd</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>pmd</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Checkstyle for code metrics -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <outputDirectory>${project.basedir}/reports/metrics</outputDirectory>
+                    <outputFile>checkstyle-result.xml</outputFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>check</goal>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JaCoCo for test coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
