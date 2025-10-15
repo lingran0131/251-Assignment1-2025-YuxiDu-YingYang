@@ -1,0 +1,25 @@
+﻿editor:
+  # 窗口设置
+  initialWindowWidth: 1000
+  initialWindowHeight: 700
+  maximized: false
+  
+  # 字体设置
+  defaultFont: "Consolas"
+  defaultFontSize: 14
+  defaultFontColor: "#000000"
+  lineNumbers: true
+  
+  # 功能设置
+  autoSave: false
+  autoSaveInterval: 30000
+  wordWrap: true
+  showStatusBar: true
+  
+  # 主题设置
+  theme: "light"
+  syntaxHighlighting: true
+  
+  # 文件设置
+  defaultFileExtension: ".txt"
+  recentFilesLimit: 10
