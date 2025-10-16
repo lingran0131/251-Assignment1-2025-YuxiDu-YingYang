@@ -1,7 +1,7 @@
 ﻿# 159.251 - Assignment 1 - Text Editor
 
 ## Group Members
-- **Yuxi Du** - 12345678
+- **Yuxi Du** -24009219
 - **Ying Yang** - 87654321
 
 ## Project Overview
