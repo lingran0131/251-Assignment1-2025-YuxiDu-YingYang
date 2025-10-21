@@ -16,10 +16,10 @@ public class MenuBuilder {
         this.textArea = textArea;
         this.parentFrame = parentFrame;
 
-        // 设置键盘绑定
+        // Set up keyboard bindings
         setupKeyBindings();
 
-        // 监听文本变化
+        // Listen for text changes
         textArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { setModified(true); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { setModified(true); }
@@ -27,7 +27,7 @@ public class MenuBuilder {
 
             private void setModified(boolean modified) {
                 isModified = modified;
-                // 在标题中显示修改状态
+                // Show modification status in title
                 String title = parentFrame.getTitle();
                 if (modified && !title.startsWith("*")) {
                     parentFrame.setTitle("*" + title);
@@ -39,7 +39,7 @@ public class MenuBuilder {
     }
 
     private void setupKeyBindings() {
-        // 为文本区域添加F3键监听
+        // Add F3 key listener for text area
         textArea.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("F3"), "findNext");
         textArea.getActionMap().put("findNext", new AbstractAction() {
             @Override
@@ -48,18 +48,9 @@ public class MenuBuilder {
             }
         });
 
-        // 为文本区域添加Ctrl+G监听（备用）
+        // Add Ctrl+G listener (alternative)
         textArea.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ctrl G"), "findNextCtrlG");
         textArea.getActionMap().put("findNextCtrlG", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                findNext();
-            }
-        });
-
-        // 为文本区域添加F3在ANCESTOR中的绑定（增强兼容性）
-        textArea.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F3"), "findNextAncestor");
-        textArea.getActionMap().put("findNextAncestor", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 findNext();
@@ -70,7 +61,7 @@ public class MenuBuilder {
     public JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // 构建各个菜单
+        // Build all menus
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
         menuBar.add(createSearchMenu());
@@ -83,39 +74,39 @@ public class MenuBuilder {
     private JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("File");
 
-        // New 菜单项
+        // New menu item
         JMenuItem newItem = new JMenuItem("New");
         newItem.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
         newItem.addActionListener(e -> newFile());
 
-        // Open 菜单项
+        // Open menu item
         JMenuItem openItem = new JMenuItem("Open");
         openItem.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
         openItem.addActionListener(e -> openFile());
 
-        // Save 菜单项
+        // Save menu item
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
         saveItem.addActionListener(e -> saveFile());
 
-        // 分隔线
+        // Separator
         fileMenu.addSeparator();
 
-        // Print 菜单项
+        // Print menu item
         JMenuItem printItem = new JMenuItem("Print");
         printItem.setAccelerator(KeyStroke.getKeyStroke("ctrl P"));
         printItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(parentFrame, "Print functionality to be implemented");
         });
 
-        // 分隔线
+        // Separator
         fileMenu.addSeparator();
 
-        // Exit 菜单项
+        // Exit menu item
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(e -> exitApplication());
 
-        // 添加所有菜单项到File菜单
+        // Add all items to File menu
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
@@ -130,22 +121,22 @@ public class MenuBuilder {
     private JMenu createEditMenu() {
         JMenu editMenu = new JMenu("Edit");
 
-        // Cut 菜单项
+        // Cut menu item
         JMenuItem cutItem = new JMenuItem("Cut");
         cutItem.setAccelerator(KeyStroke.getKeyStroke("ctrl X"));
         cutItem.addActionListener(e -> textArea.cut());
 
-        // Copy 菜单项
+        // Copy menu item
         JMenuItem copyItem = new JMenuItem("Copy");
         copyItem.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
         copyItem.addActionListener(e -> textArea.copy());
 
-        // Paste 菜单项
+        // Paste menu item
         JMenuItem pasteItem = new JMenuItem("Paste");
         pasteItem.setAccelerator(KeyStroke.getKeyStroke("ctrl V"));
         pasteItem.addActionListener(e -> textArea.paste());
 
-        // 添加到Edit菜单
+        // Add to Edit menu
         editMenu.add(cutItem);
         editMenu.add(copyItem);
         editMenu.add(pasteItem);
@@ -156,22 +147,22 @@ public class MenuBuilder {
     private JMenu createSearchMenu() {
         JMenu searchMenu = new JMenu("Search");
 
-        // Find 菜单项
+        // Find menu item
         JMenuItem findItem = new JMenuItem("Find");
         findItem.setAccelerator(KeyStroke.getKeyStroke("ctrl F"));
         findItem.addActionListener(e -> showFindDialog());
 
-        // Find Next 菜单项 - 使用 F3 和 Ctrl+G 双快捷键
+        // Find Next menu item
         JMenuItem findNextItem = new JMenuItem("Find Next");
         findNextItem.setAccelerator(KeyStroke.getKeyStroke("F3"));
         findNextItem.addActionListener(e -> findNext());
 
-        // Find Next Alternative 菜单项
+        // Find Next Alternative menu item
         JMenuItem findNextAltItem = new JMenuItem("Find Next (Ctrl+G)");
         findNextAltItem.setAccelerator(KeyStroke.getKeyStroke("ctrl G"));
         findNextAltItem.addActionListener(e -> findNext());
 
-        // Replace 菜单项（预留功能）
+        // Replace menu item (placeholder)
         JMenuItem replaceItem = new JMenuItem("Replace");
         replaceItem.setAccelerator(KeyStroke.getKeyStroke("ctrl H"));
         replaceItem.addActionListener(e -> {
@@ -215,10 +206,10 @@ public class MenuBuilder {
         return helpMenu;
     }
 
-    // ========== 文件操作方法 ==========
+    // ========== File Operation Methods ==========
 
     private void newFile() {
-        // 如果文本有更改，提示保存
+        // Prompt to save if there are unsaved changes
         if (isModified && textArea.getText().length() > 0) {
             int result = JOptionPane.showConfirmDialog(
                     parentFrame,
@@ -230,14 +221,14 @@ public class MenuBuilder {
 
             if (result == JOptionPane.YES_OPTION) {
                 if (!saveFile()) {
-                    return; // 如果保存失败或取消，不继续新建
+                    return; // Don't continue if save failed or cancelled
                 }
             } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // 取消操作
+                return; // Cancel operation
             }
         }
 
-        // 清空文本并重置状态
+        // Clear text and reset state
         textArea.setText("");
         currentFile = null;
         isModified = false;
@@ -245,7 +236,7 @@ public class MenuBuilder {
     }
 
     private void openFile() {
-        // 检查当前文件是否有未保存的更改
+        // Check if current file has unsaved changes
         if (isModified && textArea.getText().length() > 0) {
             int result = JOptionPane.showConfirmDialog(
                     parentFrame,
@@ -257,17 +248,17 @@ public class MenuBuilder {
 
             if (result == JOptionPane.YES_OPTION) {
                 if (!saveFile()) {
-                    return; // 如果保存失败或取消，不继续打开
+                    return; // Don't continue if save failed or cancelled
                 }
             } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // 取消操作
+                return; // Cancel operation
             }
         }
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Open Text File");
 
-        // 设置文件过滤器
+        // Set file filter
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                 "Text Files (*.txt)", "txt"));
 
@@ -277,17 +268,17 @@ public class MenuBuilder {
             try {
                 File fileToOpen = fileChooser.getSelectedFile();
 
-                // 读取文件内容
+                // Read file content
                 String content = new String(java.nio.file.Files.readAllBytes(fileToOpen.toPath()));
 
-                // 显示文件内容
+                // Display file content
                 textArea.setText(content);
 
-                // 更新状态
+                // Update state
                 currentFile = fileToOpen;
                 isModified = false;
 
-                // 更新窗口标题
+                // Update window title
                 parentFrame.setTitle("Massey Text Editor - " + fileToOpen.getName());
 
                 JOptionPane.showMessageDialog(parentFrame,
@@ -315,22 +306,22 @@ public class MenuBuilder {
     }
 
     private boolean saveFile() {
-        // 如果当前没有关联的文件，弹出保存对话框
+        // Show save dialog if no file is associated
         if (currentFile == null) {
             return saveAsFile();
         }
 
         try {
-            // 写入文件
+            // Write to file
             java.nio.file.Files.write(
                     currentFile.toPath(),
                     textArea.getText().getBytes()
             );
 
-            // 更新状态
+            // Update state
             isModified = false;
 
-            // 更新窗口标题
+            // Update window title
             parentFrame.setTitle("Massey Text Editor - " + currentFile.getName());
 
             JOptionPane.showMessageDialog(parentFrame,
@@ -352,7 +343,7 @@ public class MenuBuilder {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save File As");
 
-        // 设置文件过滤器
+        // Set file filter
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                 "Text Files (*.txt)", "txt"));
 
@@ -361,12 +352,12 @@ public class MenuBuilder {
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             try {
                 File fileToSave = fileChooser.getSelectedFile();
-                // 确保文件有.txt扩展名
+                // Ensure file has .txt extension
                 if (!fileToSave.getName().toLowerCase().endsWith(".txt")) {
                     fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
                 }
 
-                // 检查文件是否已存在
+                // Check if file already exists
                 if (fileToSave.exists()) {
                     int overwrite = JOptionPane.showConfirmDialog(
                             parentFrame,
@@ -381,17 +372,17 @@ public class MenuBuilder {
                     }
                 }
 
-                // 写入文件
+                // Write to file
                 java.nio.file.Files.write(
                         fileToSave.toPath(),
                         textArea.getText().getBytes()
                 );
 
-                // 更新状态
+                // Update state
                 currentFile = fileToSave;
                 isModified = false;
 
-                // 更新窗口标题
+                // Update window title
                 parentFrame.setTitle("Massey Text Editor - " + fileToSave.getName());
 
                 JOptionPane.showMessageDialog(parentFrame,
@@ -412,7 +403,7 @@ public class MenuBuilder {
     }
 
     private void exitApplication() {
-        // 检查是否有未保存的更改
+        // Check for unsaved changes
         if (isModified && textArea.getText().length() > 0) {
             int result = JOptionPane.showConfirmDialog(
                     parentFrame,
@@ -424,17 +415,17 @@ public class MenuBuilder {
 
             if (result == JOptionPane.YES_OPTION) {
                 if (!saveFile()) {
-                    return; // 如果保存失败或取消，不退出
+                    return; // Don't exit if save failed or cancelled
                 }
             } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // 取消退出
+                return; // Cancel exit
             }
         }
 
         System.exit(0);
     }
 
-    // ========== 搜索功能方法 ==========
+    // ========== Search Function Methods ==========
 
     private void showFindDialog() {
         String searchText = JOptionPane.showInputDialog(
@@ -468,7 +459,7 @@ public class MenuBuilder {
         int position = content.indexOf(lastSearchText, lastSearchPosition);
 
         if (position >= 0) {
-            // 高亮显示找到的文本
+            // Highlight found text
             textArea.setCaretPosition(position + lastSearchText.length());
             textArea.select(position, position + lastSearchText.length());
             textArea.grabFocus();
@@ -476,7 +467,7 @@ public class MenuBuilder {
             lastSearchPosition = position + 1;
             return true;
         } else {
-            // 从头开始搜索或显示未找到
+            // Search from beginning or show not found
             if (lastSearchPosition > 0) {
                 lastSearchPosition = 0;
                 JOptionPane.showMessageDialog(parentFrame,
@@ -490,7 +481,7 @@ public class MenuBuilder {
         }
     }
 
-    // ========== 时间日期功能 ==========
+    // ========== Time/Date Function Methods ==========
 
     private void insertTimeDate() {
         String currentDateTime = java.time.LocalDateTime.now().toString();

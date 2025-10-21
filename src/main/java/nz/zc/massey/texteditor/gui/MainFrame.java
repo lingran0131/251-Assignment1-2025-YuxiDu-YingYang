@@ -14,13 +14,13 @@ public class MainFrame extends JFrame {
     }
 
     private void initializeGUI() {
-        // 设置布局
+        // Set layout
         setLayout(new BorderLayout());
 
-        // 创建文本编辑区域
+        // Create text editing area
         createTextArea();
 
-        // 创建菜单栏
+        // Create menu bar
         createMenuBar();
     }
 
@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
     private void setupWindowProperties() {
         setTitle("Massey Text Editor - 159.251 Assignment 1");
         setSize(1000, 700);
-        setLocationRelativeTo(null); // 窗口居中
+        setLocationRelativeTo(null); // Center window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 

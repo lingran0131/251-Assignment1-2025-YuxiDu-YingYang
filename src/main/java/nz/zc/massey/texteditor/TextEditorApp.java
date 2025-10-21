@@ -5,18 +5,18 @@ import javax.swing.*;
 
 public class TextEditorApp {
     public static void main(String[] args) {
-        // 使用SwingUtilities确保线程安全
+        // Use SwingUtilities for thread safety
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
-                    // 设置跨平台外观，兼容性更好
+                    // Set cross-platform look and feel for better compatibility
                     UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                // 创建并显示主窗口
+                // Create and display main window
                 MainFrame frame = new MainFrame();
                 frame.setVisible(true);
             }
