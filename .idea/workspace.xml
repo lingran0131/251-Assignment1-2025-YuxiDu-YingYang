@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b29bb914-92b8-442c-87d3-6ee65be2ee80" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/TextEditorApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/TextEditorApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +118,7 @@
       <workItem from="1760498880810" duration="2025000" />
       <workItem from="1760510037369" duration="558000" />
       <workItem from="1760531564881" duration="941000" />
-      <workItem from="1760951626192" duration="5259000" />
+      <workItem from="1760951626192" duration="6653000" />
     </task>
     <servers />
   </component>
