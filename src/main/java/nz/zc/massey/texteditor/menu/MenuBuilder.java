@@ -1,738 +1,293 @@
-package nz.ac.massey.texteditor.menu;
+package nz.zc.massey.texteditor.menu;
+
+import nz.zc.massey.texteditor.config.ConfigManager;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.*;
+import javax.swing.text.html.HTMLEditorKit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.*;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MenuBuilder {
-    private JTextArea textArea;
-    private JFrame parentFrame;
+    private final JTextPane textPane;
+    private final JFrame parentFrame;
+    private final ConfigManager configManager;
+
     private boolean isModified = false;
     private File currentFile = null;
     private String lastSearchText = "";
     private int lastSearchPosition = 0;
 
-    public MenuBuilder(JTextArea textArea, JFrame parentFrame) {
-        this.textArea = textArea;
+    public MenuBuilder(JTextPane textPane, JFrame parentFrame, ConfigManager configManager) {
+        this.textPane = textPane;
         this.parentFrame = parentFrame;
+        this.configManager = configManager;
 
-        // Set up keyboard bindings
         setupKeyBindings();
 
-        // Listen for text changes
-        textArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { setModified(true); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { setModified(true); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { setModified(true); }
-
-            private void setModified(boolean modified) {
-                isModified = modified;
-                // Show modification status in title
-                String title = parentFrame.getTitle();
-                if (modified && !title.startsWith("*")) {
-                    parentFrame.setTitle("*" + title);
-                } else if (!modified && title.startsWith("*")) {
-                    parentFrame.setTitle(title.substring(1));
-                }
+        textPane.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void update(DocumentEvent e) {
+                isModified = true;
+                updateTitle();
             }
         });
     }
 
     private void setupKeyBindings() {
-        // Add F3 key listener for text area
-        textArea.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("F3"), "findNext");
-        textArea.getActionMap().put("findNext", new AbstractAction() {
+        InputMap im = textPane.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap am = textPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke("F3"), "findNext");
+        am.put("findNext", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 findNext();
             }
         });
 
-        // Add Ctrl+G listener (alternative)
-        textArea.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ctrl G"), "findNextCtrlG");
-        textArea.getActionMap().put("findNextCtrlG", new AbstractAction() {
+        im.put(KeyStroke.getKeyStroke("ctrl G"), "findNextAlt");
+        am.put("findNextAlt", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 findNext();
             }
         });
+    }
+
+    private void updateTitle() {
+        String title = parentFrame.getTitle();
+        if (isModified && !title.startsWith("*")) {
+            parentFrame.setTitle("*" + title);
+        } else if (!isModified && title.startsWith("*")) {
+            parentFrame.setTitle(title.substring(1));
+        }
     }
 
     public JMenuBar buildMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        // Build all menus
-        menuBar.add(createFileMenu());
-        menuBar.add(createEditMenu());
-        menuBar.add(createSearchMenu());
-        menuBar.add(createViewMenu());
-        menuBar.add(createHelpMenu());
-
-        return menuBar;
+        JMenuBar bar = new JMenuBar();
+        bar.add(createFileMenu());
+        bar.add(createEditMenu());
+        bar.add(createSearchMenu());
+        bar.add(createViewMenu());
+        bar.add(createHelpMenu());
+        return bar;
     }
 
+    // ========== 菜单创建 ==========
     private JMenu createFileMenu() {
-        JMenu fileMenu = new JMenu("File");
+        JMenu m = new JMenu("File");
 
-        // New menu item
         JMenuItem newItem = new JMenuItem("New");
         newItem.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
         newItem.addActionListener(e -> newFile());
 
-        // Open menu item
         JMenuItem openItem = new JMenuItem("Open");
         openItem.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
         openItem.addActionListener(e -> openFile());
 
-        // Save menu item
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
         saveItem.addActionListener(e -> saveFile());
 
-        // Separator
-        fileMenu.addSeparator();
+        m.add(newItem);
+        m.add(openItem);
+        m.add(saveItem);
 
-        // Export to PDF menu item
-        JMenuItem exportPdfItem = new JMenuItem("Export to PDF");
-        exportPdfItem.setAccelerator(KeyStroke.getKeyStroke("ctrl E"));
-        exportPdfItem.addActionListener(e -> exportToPdf());
-
-        // Print menu item
-        JMenuItem printItem = new JMenuItem("Print");
-        printItem.setAccelerator(KeyStroke.getKeyStroke("ctrl P"));
-        printItem.addActionListener(e -> printDocument());
-
-        // Separator
-        fileMenu.addSeparator();
-
-        // Exit menu item
-        JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> exitApplication());
-
-        // Add all items to File menu
-        fileMenu.add(newItem);
-        fileMenu.add(openItem);
-        fileMenu.add(saveItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exportPdfItem);
-        fileMenu.add(printItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitItem);
-
-        return fileMenu;
+        return m;
     }
 
     private JMenu createEditMenu() {
-        JMenu editMenu = new JMenu("Edit");
+        JMenu m = new JMenu("Edit");
 
-        // Cut menu item
-        JMenuItem cutItem = new JMenuItem("Cut");
-        cutItem.setAccelerator(KeyStroke.getKeyStroke("ctrl X"));
-        cutItem.addActionListener(e -> textArea.cut());
+        JMenuItem cut = new JMenuItem("Cut");
+        cut.setAccelerator(KeyStroke.getKeyStroke("ctrl X"));
+        cut.addActionListener(e -> textPane.cut());
 
-        // Copy menu item
-        JMenuItem copyItem = new JMenuItem("Copy");
-        copyItem.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
-        copyItem.addActionListener(e -> textArea.copy());
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
+        copy.addActionListener(e -> textPane.copy());
 
-        // Paste menu item
-        JMenuItem pasteItem = new JMenuItem("Paste");
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke("ctrl V"));
-        pasteItem.addActionListener(e -> textArea.paste());
+        JMenuItem paste = new JMenuItem("Paste");
+        paste.setAccelerator(KeyStroke.getKeyStroke("ctrl V"));
+        paste.addActionListener(e -> textPane.paste());
 
-        // Add to Edit menu
-        editMenu.add(cutItem);
-        editMenu.add(copyItem);
-        editMenu.add(pasteItem);
+        m.add(cut);
+        m.add(copy);
+        m.add(paste);
 
-        return editMenu;
+        return m;
     }
 
     private JMenu createSearchMenu() {
-        JMenu searchMenu = new JMenu("Search");
+        JMenu m = new JMenu("Search");
 
-        // Find menu item
-        JMenuItem findItem = new JMenuItem("Find");
-        findItem.setAccelerator(KeyStroke.getKeyStroke("ctrl F"));
-        findItem.addActionListener(e -> showFindDialog());
+        JMenuItem find = new JMenuItem("Find");
+        find.setAccelerator(KeyStroke.getKeyStroke("ctrl F"));
+        find.addActionListener(e -> showFindDialog());
 
-        // Find Next menu item
-        JMenuItem findNextItem = new JMenuItem("Find Next");
-        findNextItem.setAccelerator(KeyStroke.getKeyStroke("F3"));
-        findNextItem.addActionListener(e -> findNext());
+        JMenuItem findNext = new JMenuItem("Find Next");
+        findNext.setAccelerator(KeyStroke.getKeyStroke("F3"));
+        findNext.addActionListener(e -> findNext());
 
-        // Find Next Alternative menu item
-        JMenuItem findNextAltItem = new JMenuItem("Find Next (Ctrl+G)");
-        findNextAltItem.setAccelerator(KeyStroke.getKeyStroke("ctrl G"));
-        findNextAltItem.addActionListener(e -> findNext());
+        m.add(find);
+        m.add(findNext);
 
-        // Replace menu item (placeholder)
-        JMenuItem replaceItem = new JMenuItem("Replace");
-        replaceItem.setAccelerator(KeyStroke.getKeyStroke("ctrl H"));
-        replaceItem.addActionListener(e -> {
-            JOptionPane.showMessageDialog(parentFrame, "Replace functionality to be implemented");
-        });
-
-        searchMenu.add(findItem);
-        searchMenu.add(findNextItem);
-        searchMenu.add(findNextAltItem);
-        searchMenu.addSeparator();
-        searchMenu.add(replaceItem);
-
-        return searchMenu;
+        return m;
     }
 
     private JMenu createViewMenu() {
-        JMenu viewMenu = new JMenu("View");
+        JMenu m = new JMenu("View");
 
-        JMenuItem timeDateItem = new JMenuItem("Time/Date");
-        timeDateItem.setAccelerator(KeyStroke.getKeyStroke("ctrl T"));
-        timeDateItem.addActionListener(e -> insertTimeDate());
+        JMenuItem timeDate = new JMenuItem("Time/Date");
+        timeDate.setAccelerator(KeyStroke.getKeyStroke("ctrl T"));
+        timeDate.addActionListener(e -> insertTimeDate());
 
-        viewMenu.add(timeDateItem);
-        return viewMenu;
+        m.add(timeDate);
+        return m;
     }
 
     private JMenu createHelpMenu() {
-        JMenu helpMenu = new JMenu("Help");
+        JMenu m = new JMenu("Help");
 
-        JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(e -> {
-            String aboutMessage = "Massey Text Editor\n\n" +
-                    "Developed by: Yuxi Du and Ying Yang\n" +
-                    "Course: 159.251 Software Design and Construction\n" +
-                    "Assignment 1 - 2025\n" +
-                    "Version: 1.1.0 (PDF Export + Print)";
-            JOptionPane.showMessageDialog(parentFrame, aboutMessage, "About", JOptionPane.INFORMATION_MESSAGE);
+        JMenuItem about = new JMenuItem("About");
+        about.addActionListener(e -> {
+            JOptionPane.showMessageDialog(parentFrame,
+                    "Massey Text Editor\n\n" +
+                            "开发者: Yuxi Du & Ying Yang\n" +
+                            "课程: 159.251",
+                    "关于", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        helpMenu.add(aboutItem);
-        return helpMenu;
+        m.add(about);
+        return m;
     }
 
-    // ========== File Operation Methods ==========
-
+    // ========== 文件操作 ==========
     private void newFile() {
-        // Prompt to save if there are unsaved changes
-        if (isModified && textArea.getText().length() > 0) {
-            int result = JOptionPane.showConfirmDialog(
-                    parentFrame,
-                    "Do you want to save changes to the current file?",
-                    "Unsaved Changes",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE
-            );
-
-            if (result == JOptionPane.YES_OPTION) {
-                if (!saveFile()) {
-                    return; // Don't continue if save failed or cancelled
-                }
-            } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // Cancel operation
-            }
+        if (isModified && !textPane.getText().isEmpty()) {
+            int result = JOptionPane.showConfirmDialog(parentFrame, "保存更改？", "提示", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (result == JOptionPane.YES_OPTION) saveFile();
+            else if (result == JOptionPane.CANCEL_OPTION) return;
         }
 
-        // Clear text and reset state
-        textArea.setText("");
+        textPane.setText("");
         currentFile = null;
         isModified = false;
-        parentFrame.setTitle("Massey Text Editor - New File");
+        parentFrame.setTitle("Massey Text Editor - 新建");
     }
 
     private void openFile() {
-        // Check if current file has unsaved changes
-        if (isModified && textArea.getText().length() > 0) {
-            int result = JOptionPane.showConfirmDialog(
-                    parentFrame,
-                    "Do you want to save changes to the current file?",
-                    "Unsaved Changes",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE
-            );
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FileNameExtensionFilter("文本文件", "txt", "java", "py", "js", "rtf", "odt"));
 
-            if (result == JOptionPane.YES_OPTION) {
-                if (!saveFile()) {
-                    return; // Don't continue if save failed or cancelled
-                }
-            } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // Cancel operation
-            }
-        }
+        if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) return;
 
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Open Text File");
-
-        // Set file filter
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                "Text Files (*.txt)", "txt"));
-
-        int userSelection = fileChooser.showOpenDialog(parentFrame);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            try {
-                File fileToOpen = fileChooser.getSelectedFile();
-
-                // Read file content
-                String content = new String(java.nio.file.Files.readAllBytes(fileToOpen.toPath()));
-
-                // Display file content
-                textArea.setText(content);
-
-                // Update state
-                currentFile = fileToOpen;
-                isModified = false;
-
-                // Update window title
-                parentFrame.setTitle("Massey Text Editor - " + fileToOpen.getName());
-
-                JOptionPane.showMessageDialog(parentFrame,
-                        "File opened successfully!",
-                        "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (java.nio.file.NoSuchFileException ex) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "File not found: " + ex.getMessage(),
-                        "Open Error",
-                        JOptionPane.ERROR_MESSAGE);
-            } catch (java.nio.file.AccessDeniedException ex) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Access denied: " + ex.getMessage(),
-                        "Open Error",
-                        JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Error opening file: " + ex.getMessage(),
-                        "Open Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+        File file = fc.getSelectedFile();
+        try {
+            String content = new String(Files.readAllBytes(file.toPath()));
+            textPane.setText(content);
+            currentFile = file;
+            isModified = false;
+            parentFrame.setTitle("编辑: " + file.getName());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(parentFrame, "打开失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private boolean saveFile() {
-        // Show save dialog if no file is associated
-        if (currentFile == null) {
-            return saveAsFile();
-        }
+        if (currentFile == null) return saveAsFile();
 
         try {
-            // Write to file
-            java.nio.file.Files.write(
-                    currentFile.toPath(),
-                    textArea.getText().getBytes()
-            );
-
-            // Update state
+            Files.write(currentFile.toPath(), textPane.getText().getBytes());
             isModified = false;
-
-            // Update window title
-            parentFrame.setTitle("Massey Text Editor - " + currentFile.getName());
-
-            JOptionPane.showMessageDialog(parentFrame,
-                    "File saved successfully!",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
+            parentFrame.setTitle("编辑: " + currentFile.getName());
             return true;
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(parentFrame,
-                    "Error saving file: " + ex.getMessage(),
-                    "Save Error",
-                    JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(parentFrame, "保存失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
     private boolean saveAsFile() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Save File As");
+        JFileChooser fc = new JFileChooser();
+        if (fc.showSaveDialog(parentFrame) != JFileChooser.APPROVE_OPTION) return false;
 
-        // Set file filter
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                "Text Files (*.txt)", "txt"));
+        File file = fc.getSelectedFile();
+        if (!file.getName().endsWith(".txt")) file = new File(file.getAbsolutePath() + ".txt");
 
-        int userSelection = fileChooser.showSaveDialog(parentFrame);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            try {
-                File fileToSave = fileChooser.getSelectedFile();
-                // Ensure file has .txt extension
-                if (!fileToSave.getName().toLowerCase().endsWith(".txt")) {
-                    fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
-                }
-
-                // Check if file already exists
-                if (fileToSave.exists()) {
-                    int overwrite = JOptionPane.showConfirmDialog(
-                            parentFrame,
-                            "File already exists. Overwrite?",
-                            "Confirm Overwrite",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE
-                    );
-
-                    if (overwrite != JOptionPane.YES_OPTION) {
-                        return false;
-                    }
-                }
-
-                // Write to file
-                java.nio.file.Files.write(
-                        fileToSave.toPath(),
-                        textArea.getText().getBytes()
-                );
-
-                // Update state
-                currentFile = fileToSave;
-                isModified = false;
-
-                // Update window title
-                parentFrame.setTitle("Massey Text Editor - " + fileToSave.getName());
-
-                JOptionPane.showMessageDialog(parentFrame,
-                        "File saved successfully!",
-                        "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-                return true;
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Error saving file: " + ex.getMessage(),
-                        "Save Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
+        try {
+            Files.write(file.toPath(), textPane.getText().getBytes());
+            currentFile = file;
+            isModified = false;
+            parentFrame.setTitle("编辑: " + file.getName());
+            return true;
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(parentFrame, "保存失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
-        return false;
     }
 
-    private void exitApplication() {
-        // Check for unsaved changes
-        if (isModified && textArea.getText().length() > 0) {
-            int result = JOptionPane.showConfirmDialog(
-                    parentFrame,
-                    "You have unsaved changes. Do you want to save before exiting?",
-                    "Unsaved Changes",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE
-            );
-
-            if (result == JOptionPane.YES_OPTION) {
-                if (!saveFile()) {
-                    return; // Don't exit if save failed or cancelled
-                }
-            } else if (result == JOptionPane.CANCEL_OPTION) {
-                return; // Cancel exit
-            }
-        }
-
-        System.exit(0);
-    }
-
-    // ========== Search Function Methods ==========
-
+    // ========== 搜索功能 ==========
     private void showFindDialog() {
-        String searchText = JOptionPane.showInputDialog(
-                parentFrame,
-                "Enter text to find:",
-                "Find",
-                JOptionPane.QUESTION_MESSAGE
-        );
-
-        if (searchText != null && !searchText.trim().isEmpty()) {
-            lastSearchText = searchText.trim();
+        String txt = JOptionPane.showInputDialog(parentFrame, "查找:", "查找", JOptionPane.QUESTION_MESSAGE);
+        if (txt != null && !txt.trim().isEmpty()) {
+            lastSearchText = txt.trim();
             lastSearchPosition = 0;
-            boolean found = findNext();
-
-            if (!found) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Text not found: \"" + lastSearchText + "\"",
-                        "Find",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
+            findNext();
         }
     }
 
     private boolean findNext() {
-        if (lastSearchText.isEmpty()) {
-            showFindDialog();
-            return false;
-        }
+        if (lastSearchText.isEmpty()) return false;
 
-        String content = textArea.getText();
-        int position = content.indexOf(lastSearchText, lastSearchPosition);
+        String content = textPane.getText();
+        int pos = content.indexOf(lastSearchText, lastSearchPosition);
 
-        if (position >= 0) {
-            // Highlight found text
-            textArea.setCaretPosition(position + lastSearchText.length());
-            textArea.select(position, position + lastSearchText.length());
-            textArea.grabFocus();
-
-            lastSearchPosition = position + 1;
+        if (pos >= 0) {
+            textPane.setCaretPosition(pos + lastSearchText.length());
+            textPane.select(pos, pos + lastSearchText.length());
+            lastSearchPosition = pos + 1;
             return true;
         } else {
-            // Search from beginning or show not found
-            if (lastSearchPosition > 0) {
-                lastSearchPosition = 0;
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Search wrapped to beginning.",
-                        "Find",
-                        JOptionPane.INFORMATION_MESSAGE);
-                return findNext();
-            } else {
-                return false;
-            }
+            lastSearchPosition = 0;
+            JOptionPane.showMessageDialog(parentFrame, "已回到开头。", "查找", JOptionPane.INFORMATION_MESSAGE);
+            return findNext();
         }
     }
 
-    // ========== Time/Date Function Methods ==========
-
+    // ========== 时间日期 ==========
     private void insertTimeDate() {
-        String currentDateTime = java.time.LocalDateTime.now().toString();
-        int caretPosition = textArea.getCaretPosition();
-        textArea.insert(currentDateTime, caretPosition);
-        isModified = true;
-    }
-
-    // ========== PDF Export Function Methods ==========
-
-    private void exportToPdf() {
-        if (textArea.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parentFrame,
-                    "No content to export. Please add some text first.",
-                    "Export Error",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Export to PDF");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                "PDF Files (*.pdf)", "pdf"));
-
-        int userSelection = fileChooser.showSaveDialog(parentFrame);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            try {
-                File pdfFile = fileChooser.getSelectedFile();
-                // Ensure file has .pdf extension
-                if (!pdfFile.getName().toLowerCase().endsWith(".pdf")) {
-                    pdfFile = new File(pdfFile.getAbsolutePath() + ".pdf");
-                }
-
-                // Check if file already exists
-                if (pdfFile.exists()) {
-                    int overwrite = JOptionPane.showConfirmDialog(
-                            parentFrame,
-                            "PDF file already exists. Overwrite?",
-                            "Confirm Overwrite",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE
-                    );
-
-                    if (overwrite != JOptionPane.YES_OPTION) {
-                        return;
-                    }
-                }
-
-                // Create PDF document
-                createPdfDocument(pdfFile, textArea.getText());
-
-                JOptionPane.showMessageDialog(parentFrame,
-                        "PDF exported successfully!\nFile: " + pdfFile.getName(),
-                        "Export Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Error exporting PDF: " + ex.getMessage(),
-                        "Export Error",
-                        JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    private void createPdfDocument(File pdfFile, String content) throws IOException {
-        // Use Apache PDFBox to create PDF
-        org.apache.pdfbox.pdmodel.PDDocument document = new org.apache.pdfbox.pdmodel.PDDocument();
-
+        String dt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        int pos = textPane.getCaretPosition();
         try {
-            // Create a new page
-            org.apache.pdfbox.pdmodel.PDPage page = new org.apache.pdfbox.pdmodel.PDPage();
-            document.addPage(page);
-
-            // Prepare content stream
-            org.apache.pdfbox.pdmodel.PDPageContentStream contentStream =
-                    new org.apache.pdfbox.pdmodel.PDPageContentStream(document, page);
-
-            // Set font and size
-            contentStream.setFont(org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA, 12);
-            contentStream.beginText();
-
-            // Set text position (starting from top left)
-            contentStream.newLineAtOffset(50, 750);
-
-            // Split content into lines that fit PDF page width
-            String[] lines = splitTextIntoLines(content, 80);
-
-            // Track current Y position
-            float currentY = 750;
-            float lineHeight = 15;
-
-            // Add text lines
-            for (String line : lines) {
-                // Check if we need a new page
-                if (currentY < 50) {
-                    contentStream.endText();
-                    contentStream.close();
-
-                    // Create new page
-                    page = new org.apache.pdfbox.pdmodel.PDPage();
-                    document.addPage(page);
-                    contentStream = new org.apache.pdfbox.pdmodel.PDPageContentStream(document, page);
-                    contentStream.setFont(org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA, 12);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(50, 750);
-                    currentY = 750;
-                }
-
-                contentStream.showText(line);
-                contentStream.newLineAtOffset(0, -lineHeight); // Move to next line
-                currentY -= lineHeight;
-            }
-
-            contentStream.endText();
-            contentStream.close();
-
-            // Save the document
-            document.save(pdfFile);
-
-        } finally {
-            document.close();
-        }
+            textPane.getDocument().insertString(pos, dt, null);
+        } catch (Exception ignored) {}
     }
 
-    private String[] splitTextIntoLines(String text, int maxLineLength) {
-        // Simple line splitting logic
-        java.util.List<String> lines = new java.util.ArrayList<>();
-        String[] paragraphs = text.split("\n");
-
-        for (String paragraph : paragraphs) {
-            if (paragraph.length() <= maxLineLength) {
-                lines.add(paragraph);
-            } else {
-                // Split long lines
-                int start = 0;
-                while (start < paragraph.length()) {
-                    int end = Math.min(start + maxLineLength, paragraph.length());
-                    if (end < paragraph.length()) {
-                        // Try to break at word boundary
-                        int breakPoint = paragraph.lastIndexOf(' ', end);
-                        if (breakPoint > start) {
-                            end = breakPoint;
-                        }
-                    }
-                    lines.add(paragraph.substring(start, end).trim());
-                    start = end + 1;
-                }
-            }
-            // Add empty line between paragraphs only if not the last paragraph
-            if (!paragraph.equals(paragraphs[paragraphs.length - 1])) {
-                lines.add("");
-            }
-        }
-
-        return lines.toArray(new String[0]);
-    }
-
-    // ========== Print Function Methods ==========
-
-    private void printDocument() {
-        if (textArea.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parentFrame,
-                    "No content to print. Please add some text first.",
-                    "Print Error",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            // Create print job
-            java.awt.print.PrinterJob printerJob = java.awt.print.PrinterJob.getPrinterJob();
-            printerJob.setJobName("Massey Text Editor Document");
-
-            // Set printable component
-            printerJob.setPrintable(new TextAreaPrintable(textArea));
-
-            // Show print dialog
-            if (printerJob.printDialog()) {
-                // Execute print job
-                printerJob.print();
-                JOptionPane.showMessageDialog(parentFrame,
-                        "Document sent to printer successfully!",
-                        "Print Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-
-        } catch (java.awt.print.PrinterException ex) {
-            JOptionPane.showMessageDialog(parentFrame,
-                    "Error printing document: " + ex.getMessage(),
-                    "Print Error",
-                    JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        }
-    }
-
-    // Inner class for printable text area
-    private static class TextAreaPrintable implements java.awt.print.Printable {
-        private JTextArea textArea;
-
-        public TextAreaPrintable(JTextArea textArea) {
-            this.textArea = textArea;
-        }
-
-        @Override
-        public int print(java.awt.Graphics graphics, java.awt.print.PageFormat pageFormat, int pageIndex)
-                throws java.awt.print.PrinterException {
-
-            java.awt.Graphics2D g2d = (java.awt.Graphics2D) graphics;
-            g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-
-            // Set font for printing
-            g2d.setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 10));
-
-            // Calculate line height and available lines per page
-            java.awt.font.FontRenderContext frc = g2d.getFontRenderContext();
-            java.awt.font.LineMetrics lm = g2d.getFont().getLineMetrics("", frc);
-            int lineHeight = (int) lm.getHeight();
-            int linesPerPage = (int) pageFormat.getImageableHeight() / lineHeight;
-
-            // Split text into lines
-            String[] lines = textArea.getText().split("\n");
-            int totalLines = lines.length;
-            int totalPages = (int) Math.ceil((double) totalLines / linesPerPage);
-
-            if (pageIndex >= totalPages) {
-                return NO_SUCH_PAGE;
-            }
-
-            // Print lines for current page
-            int startLine = pageIndex * linesPerPage;
-            int endLine = Math.min(startLine + linesPerPage, totalLines);
-
-            int y = lineHeight;
-            for (int i = startLine; i < endLine; i++) {
-                g2d.drawString(lines[i], 0, y);
-                y += lineHeight;
-            }
-
-            // Add page number footer
-            String footer = "Page " + (pageIndex + 1) + " of " + totalPages;
-            g2d.drawString(footer, 0, (int) pageFormat.getImageableHeight() - 10);
-
-            return PAGE_EXISTS;
-        }
+    // ========== 抽象监听器 ==========
+    private abstract static class DocumentAdapter implements DocumentListener {
+        @Override public void insertUpdate(DocumentEvent e) { update(e); }
+        @Override public void removeUpdate(DocumentEvent e) { update(e); }
+        @Override public void changedUpdate(DocumentEvent e) { update(e); }
+        protected abstract void update(DocumentEvent e);
     }
 }

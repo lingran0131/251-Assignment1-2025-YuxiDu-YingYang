@@ -1,0 +1,41 @@
+editor:
+  font: "Monospaced"
+  size: 14
+  lineWrap: true
+  theme: light
+
+features:
+  syntax_highlighting:
+    enabled: true
+    languages:
+      - extension: ".java"
+        keywords: ["abstract", "assert", "boolean", "break", "byte", "case", "catch",
+                   "char", "class", "const", "continue", "default", "do", "double",
+                   "else", "enum", "extends", "final", "finally", "float", "for",
+                   "goto", "if", "implements", "import", "instanceof", "int",
+                   "interface", "long", "native", "new", "package", "private",
+                   "protected", "public", "return", "short", "static", "strictfp",
+                   "super", "switch", "synchronized", "this", "throw", "throws",
+                   "transient", "try", "void", "volatile", "while"]
+        types: ["String", "Integer", "Double", "Boolean", "Character", "Float", "Long", "Short", "Byte"]
+        literals: ["true", "false", "null"]
+        comments: ['//', '/\*', '\*/']
+
+      - extension: ".py"
+        keywords: ["and", "as", "assert", "break", "class", "continue", "def",
+                   "del", "elif", "else", "except", "False", "finally", "for",
+                   "from", "global", "if", "import", "in", "is", "lambda", "None",
+                   "nonlocal", "not", "or", "pass", "raise", "return", "True",
+                   "try", "while", "with", "yield"]
+        builtins: ["print", "len", "range", "input", "int", "str", "list", "dict", "set", "tuple"]
+        comments: ['#']
+
+      - extension: ".js"
+        keywords: ["var", "let", "const", "function", "if", "else", "for", "while",
+                   "do", "switch", "case", "break", "continue", "return", "typeof",
+                   "instanceof", "new", "this", "class", "extends", "super",
+                   "import", "export", "default", "async", "await", "try", "catch",
+                   "finally", "throw"]
+        literals: ["true", "false", "null", "undefined"]
+        builtins: ["console", "document", "window", "alert", "prompt"]
+        comments: ['//', '/\*', '\*/']

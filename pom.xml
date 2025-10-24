@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>nz.ac.massey</groupId>
+    <groupId>nz.zc.massey</groupId>
     <artifactId>text-editor</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Massey Text Editor</name>
-    <description>159.251 Assignment 1 - Text Editor</description>
+    <description>159.251 Assignment 1 - Java Text Editor</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -20,21 +19,35 @@
     </properties>
 
     <dependencies>
-        <!-- PDFBox for PDF export functionality -->
+        <!-- PDFBox -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>2.0.27</version>
         </dependency>
 
-        <!-- SnakeYAML for configuration files -->
+        <!-- Apache POI for RTF -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+
+        <!-- ODF Toolkit for ODT -->
+        <dependency>
+            <groupId>org.odftoolkit</groupId>
+            <artifactId>odfdom-java</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <!-- SnakeYAML -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.0</version>
         </dependency>
 
-        <!-- JUnit for unit testing -->
+        <!-- JUnit (Bonus) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -45,7 +58,6 @@
 
     <build>
         <plugins>
-            <!-- Compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -55,38 +67,13 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-
-            <!-- Exec plugin to run the application -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>nz.ac.massey.texteditor.TextEditorApp</mainClass>
+                    <mainClass>nz.zc.massey.texteditor.TextEditorApp</mainClass>
                 </configuration>
-            </plugin>
-
-            <!-- PMD plugin for code quality -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.21.0</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>rulesets/java/basic.xml</ruleset>
-                        <ruleset>rulesets/java/naming.xml</ruleset>
-                    </rulesets>
-                    <printFailingErrors>true</printFailingErrors>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>pmd</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b29bb914-92b8-442c-87d3-6ee65be2ee80" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/config/ConfigManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/TextEditorApp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/TextEditorApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +76,9 @@
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "MavenSettings",
     "vue.rearranger.settings.migration": "true",
-    "应用程序.TextEditorApp.executor": "Run"
+    "应用程序.TextEditorApp.executor": "Run",
+    "应用程序.nz.ac.massey.texteditor.gui.TextEditorApp.executor": "Run",
+    "应用程序.nz.zc.massey.texteditor.TextEditorApp.executor": "Run"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -80,7 +87,7 @@
       <recent name="C:\Users\huawei\251-Assignment1-2025-YuxiDu-YingYang\src\main\java\nz" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="应用程序.nz.zc.massey.texteditor.TextEditorApp">
     <configuration name="TextEditorApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="nz.ac.massey.texteditor.TextEditorApp" />
       <module name="text-editor" />
@@ -94,9 +101,37 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="nz.ac.massey.texteditor.gui.TextEditorApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="nz.ac.massey.texteditor.gui.TextEditorApp" />
+      <module name="text-editor" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nz.ac.massey.texteditor.gui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="nz.zc.massey.texteditor.TextEditorApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="nz.zc.massey.texteditor.TextEditorApp" />
+      <module name="text-editor" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nz.zc.massey.texteditor.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="应用程序.nz.zc.massey.texteditor.TextEditorApp" />
         <item itemvalue="应用程序.TextEditorApp" />
+        <item itemvalue="应用程序.nz.ac.massey.texteditor.gui.TextEditorApp" />
       </list>
     </recent_temporary>
   </component>
@@ -118,7 +153,8 @@
       <workItem from="1760498880810" duration="2025000" />
       <workItem from="1760510037369" duration="558000" />
       <workItem from="1760531564881" duration="941000" />
-      <workItem from="1760951626192" duration="6653000" />
+      <workItem from="1760951626192" duration="17422000" />
+      <workItem from="1761285471149" duration="6188000" />
     </task>
     <servers />
   </component>

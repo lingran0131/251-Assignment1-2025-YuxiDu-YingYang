@@ -1,12 +1,15 @@
-package nz.ac.massey.texteditor.gui;
+package nz.zc.massey.texteditor.gui;
 
-import nz.ac.massey.texteditor.menu.MenuBuilder;
+import nz.zc.massey.texteditor.config.ConfigManager;
+import nz.zc.massey.texteditor.menu.MenuBuilder;
 import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
-    private JTextArea textArea;
+    private JTextPane textPane; // 移除 final
     private JScrollPane scrollPane;
+    private final ConfigManager configManager = new ConfigManager();
 
     public MainFrame() {
         initializeGUI();
@@ -14,23 +17,17 @@ public class MainFrame extends JFrame {
     }
 
     private void initializeGUI() {
-        // Set layout
         setLayout(new BorderLayout());
-
-        // Create text editing area
         createTextArea();
-
-        // Create menu bar
         createMenuBar();
     }
 
     private void createTextArea() {
-        textArea = new JTextArea();
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
+        textPane = new JTextPane();
+        textPane.setEditorKit(new HTMLEditorKit()); // 支持换行
+        textPane.setFont(new Font(configManager.getFontName(), Font.PLAIN, configManager.getFontSize()));
 
-        scrollPane = new JScrollPane(textArea);
+        scrollPane = new JScrollPane(textPane);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -38,19 +35,18 @@ public class MainFrame extends JFrame {
     }
 
     private void createMenuBar() {
-        MenuBuilder menuBuilder = new MenuBuilder(textArea, this);
-        JMenuBar menuBar = menuBuilder.buildMenuBar();
-        setJMenuBar(menuBar);
+        MenuBuilder menuBuilder = new MenuBuilder(textPane, this, configManager);
+        setJMenuBar(menuBuilder.buildMenuBar());
     }
 
     private void setupWindowProperties() {
         setTitle("Massey Text Editor - 159.251 Assignment 1");
         setSize(1000, 700);
-        setLocationRelativeTo(null); // Center window
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public JTextArea getTextArea() {
-        return textArea;
+    public JTextPane getTextPane() {
+        return textPane;
     }
 }
