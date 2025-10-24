@@ -1,8 +1,8 @@
 ﻿# 159.251 - Assignment 1 - Text Editor
 
 ## Group Members
-- **Yuxi Du** - 12345678
-- **Ying Yang** - 87654321
+- **Yuxi Du** - 24009219
+- **Ying Yang** - 24009466
 
 ## Project Overview
 A feature-rich text editor developed in Java with GUI support, file format compatibility, and code syntax highlighting.
@@ -54,10 +54,10 @@ Edit \config/editor-config.yml\ to customize editor settings.
 [GitHub Repository](https://github.com/lingran0131/251-Assignment1-2025-YuxiDu-YingYang)
 
 ## Git Contributions
-### Yuxi Du's Key Commits:
-- \6cb3b11\ - Initial project setup
+### Ying Yang's Key Commits:
+- \Yang2400\ - Initial project setup
 
-### Ying Yang's Key Commits:  
+### Yuxi Du's Key Commits:  
 - \[lingran0131]\ - Add Maven dependencies and plugins
 - \[lingran0131]\ - Configure code quality tools  
 - \[lingran0131]\ - Setup GitHub Actions CI
