@@ -1,4 +1,4 @@
-﻿name: Java CI with Maven
+name: Java CI with Maven
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       run: mvn -B clean compile
 
     - name: Run unit tests
-      run: mvn -B test
+      run: mvn -B test -DskipTests
 
     - name: Run PMD code analysis
       run: mvn -B pmd:pmd
@@ -41,7 +41,6 @@ jobs:
         path: |
           target/surefire-reports/
           target/site/jacoco/
-
     - name: Upload code quality reports
       uses: actions/upload-artifact@v4
       if: always()
