@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b29bb914-92b8-442c-87d3-6ee65be2ee80" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/config/ConfigManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/TextEditorApp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/TextEditorApp.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/gui/MainFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nz/zc/massey/texteditor/menu/MenuBuilder.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,29 +51,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/huawei/251-Assignment1-2025-YuxiDu-YingYang",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "MavenSettings",
-    "vue.rearranger.settings.migration": "true",
-    "应用程序.TextEditorApp.executor": "Run",
-    "应用程序.nz.ac.massey.texteditor.gui.TextEditorApp.executor": "Run",
-    "应用程序.nz.zc.massey.texteditor.TextEditorApp.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/huawei/251-Assignment1-2025-YuxiDu-YingYang&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;应用程序.TextEditorApp.executor&quot;: &quot;Run&quot;,
+    &quot;应用程序.nz.ac.massey.texteditor.gui.TextEditorApp.executor&quot;: &quot;Run&quot;,
+    &quot;应用程序.nz.zc.massey.texteditor.TextEditorApp.executor&quot;: &quot;Run&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\huawei\251-Assignment1-2025-YuxiDu-YingYang\src\main\java\nz\zc" />
@@ -154,7 +147,8 @@
       <workItem from="1760510037369" duration="558000" />
       <workItem from="1760531564881" duration="941000" />
       <workItem from="1760951626192" duration="17422000" />
-      <workItem from="1761285471149" duration="6188000" />
+      <workItem from="1761285471149" duration="7003000" />
+      <workItem from="1761306299820" duration="439000" />
     </task>
     <servers />
   </component>
